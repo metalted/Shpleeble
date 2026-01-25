@@ -10,30 +10,56 @@ namespace Shpleeble
     {
         public static ShpleebleData GetLocalData()
         {
-            ZeepkistNetworking.CosmeticIDs cosmeticIDs = ProgressionManager.Instance.GetAdventureCosmetics();
-
-            ShpleebleData playerData = new ShpleebleData()
+            try
             {
-                chatColor = GetOnlinePlayerHexColor(),
-                color = cosmeticIDs.color,
-                color_body = cosmeticIDs.color_body,
-                color_leftArm = cosmeticIDs.color_leftArm,
-                color_leftLeg = cosmeticIDs.color_leftLeg,
-                color_rightArm = cosmeticIDs.color_rightArm,
-                color_rightLeg = cosmeticIDs.color_rightLeg,
-                frontWheels = cosmeticIDs.frontWheels,
-                glasses = cosmeticIDs.glasses,
-                hat = cosmeticIDs.hat,
-                horn = cosmeticIDs.horn,
-                name = PlayerManager.Instance.steamAchiever.GetPlayerName(false),
-                paraglider = cosmeticIDs.paraglider,
-                rearWheels = cosmeticIDs.rearWheels,
-                state = 0,
-                steamID = PlayerManager.Instance.steamAchiever.GetPlayerSteamID(),
-                zeepkist = cosmeticIDs.zeepkist
-            };
+                ZeepkistNetworking.CosmeticIDs cosmeticIDs = ProgressionManager.Instance.GetAdventureCosmetics();
 
-            return playerData;
+                ShpleebleData playerData = new ShpleebleData()
+                {
+                    chatColor = GetOnlinePlayerHexColor(),
+                    color = cosmeticIDs.color,
+                    color_body = cosmeticIDs.color_body,
+                    color_leftArm = cosmeticIDs.color_leftArm,
+                    color_leftLeg = cosmeticIDs.color_leftLeg,
+                    color_rightArm = cosmeticIDs.color_rightArm,
+                    color_rightLeg = cosmeticIDs.color_rightLeg,
+                    frontWheels = cosmeticIDs.frontWheels,
+                    glasses = cosmeticIDs.glasses,
+                    hat = cosmeticIDs.hat,
+                    horn = cosmeticIDs.horn,
+                    name = PlayerManager.Instance.steamAchiever.GetPlayerName(false),
+                    paraglider = cosmeticIDs.paraglider,
+                    rearWheels = cosmeticIDs.rearWheels,
+                    state = 0,
+                    steamID = PlayerManager.Instance.steamAchiever.GetPlayerSteamID(),
+                    zeepkist = cosmeticIDs.zeepkist
+                };
+
+                return playerData;
+            }
+            catch
+            {
+                return new ShpleebleData()
+                {
+                    chatColor = "#FFFFFF",
+                    color = 0,
+                    color_body = 0,
+                    color_leftArm = 0,
+                    color_leftLeg = 0,
+                    color_rightArm = 0,
+                    color_rightLeg = 0,
+                    frontWheels = 0,
+                    glasses = 0,
+                    hat = 0,
+                    horn = 0,
+                    name = "null",
+                    paraglider = 0,
+                    rearWheels = 0,
+                    state = 0,
+                    steamID = 0,
+                    zeepkist = 0
+                };
+            }          
         }
 
         private static string GetOnlinePlayerHexColor()

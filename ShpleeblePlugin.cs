@@ -4,9 +4,9 @@ using HarmonyLib;
 namespace Shpleeble
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
-    public class Plugin : BaseUnityPlugin
+    public class ShpleeblePlugin : BaseUnityPlugin
     {
-        public static Plugin Instance;
+        public static ShpleeblePlugin Instance;
 
         // =========================
         // Internal systems
@@ -39,6 +39,16 @@ namespace Shpleeble
             ShpleebleHandle handle = Instance._factory.Create();
             handle.SetMode(CharacterMode.Race);
             return handle;
+        }
+
+        public static ShpleebleData GetLocalShpleebleData()
+        {
+            if(Instance == null)
+            {
+                throw new System.InvalidOperationException("Shpleeble plugin not initialized");
+            }
+
+            return ShpleebleUtils.GetLocalData();
         }
 
         // =========================
@@ -74,7 +84,7 @@ namespace Shpleeble
     {
         public static void Prefix()
         {
-            Plugin.Instance?.EnteredMainMenu();
+            ShpleeblePlugin.Instance?.EnteredMainMenu();
         }
     }
 }

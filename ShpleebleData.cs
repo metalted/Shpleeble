@@ -7,7 +7,7 @@ using ZeepkistNetworking;
 
 namespace Shpleeble
 {
-    public struct ShpleebleData
+    public class ShpleebleData
     {
         public string chatColor;
         public int color;
