@@ -3,21 +3,17 @@ using UnityEngine;
 
 namespace Shpleeble
 {
-
-    /// <summary>
-    /// Defines the modes a player character can be in.
-    /// </summary>
     public enum CharacterMode
     {
-        Build = 0,
+        None = 0,
         Race = 1,
-        Paraglider = 2,
-        Offroad = 3,
-        Paint = 4,
-        Treegun = 5,
-        Soap = 7,
-        Bulldozer = 8,
-        None = 9
+        Offroad = 2,
+        Soap = 3,
+        Paraglider = 4,
+        Bulldozer = 5,
+        Build = 6,
+        Paint = 7,
+        Treegun = 8
     }
 
     public class ShpleebleView
@@ -69,6 +65,11 @@ namespace Shpleeble
         public void SetName(string name)
         {
             displayName.text = name;
+        }
+
+        public void SetHorn(bool active)
+        {
+            horn.SetActive(active);
         }
 
         public void ApplyCosmetics(CosmeticsV16 cosmetics)
@@ -258,5 +259,4 @@ namespace Shpleeble
             );
         }
     }
-
 }

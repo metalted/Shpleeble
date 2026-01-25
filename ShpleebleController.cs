@@ -10,51 +10,112 @@ namespace Shpleeble
         private ShpleebleView view;
         private bool active;
 
+        // -----------------
+        // Targets
+        // -----------------
         private Vector3 targetPosition;
-        private Quaternion targetRotation;
+
+        // Race / rigid rotation
+        private Quaternion targetRaceRotation;
+
+        // Build / character rotations
         private Quaternion targetBodyRotation;
         private Quaternion targetArmatureRotation;
+
+        // -----------------
+        // Tuning
+        // -----------------
         private float maxMoveDuration = 0.3f;
         private float maxRotateDuration = 0.2f;
 
+        // -----------------
+        // Setup
+        // -----------------
         public void Initialize(ShpleebleView view)
         {
             this.view = view;
+
+            // Initialize rotation targets to current state
+            targetPosition = transform.position;
+            targetRaceRotation = transform.rotation;
+            targetBodyRotation = transform.rotation;
+
+            if (view.TryGetUpperBodyRotation(out Quaternion upper))
+                targetArmatureRotation = upper;
         }
 
+        // -----------------
+        // Data
+        // -----------------
         public void SetShpleebleData(ShpleebleData data)
         {
             Data = data;
+
             view.SetName(data.name);
             view.ApplyCosmetics(data.ToCosmeticsV16());
+
             SetMode((CharacterMode)data.state);
         }
 
         public void SetMode(CharacterMode mode)
         {
-            if (Mode == mode) return;
+            if (Mode == mode)
+                return;
+
             Mode = mode;
             view.ApplyMode(mode);
         }
 
+        public void SetHorn(bool active)
+        {
+            view.SetHorn(active);
+        }
+
+        // -----------------
+        // Movement
+        // -----------------
         public void MoveTo(Vector3 pos, bool instant)
         {
             targetPosition = pos;
-            if (instant) transform.position = pos;
+
+            if (instant)
+                transform.position = pos;
         }
 
-        public void LookAt(Vector3 euler, bool instant)
+        // -----------------
+        // Rotation intents
+        // -----------------
+
+        // Race-like modes (single rigid body)
+        public void SetRaceRotation(Quaternion rotation, bool instant)
         {
-            targetRotation = Quaternion.Euler(euler);
-            if (instant) transform.rotation = targetRotation;
+            targetRaceRotation = rotation;
+
+            if (instant)
+                transform.rotation = rotation;
         }
 
-        public void LookUpperBody(float angle, bool instant)
+        // Build / character modes (full body)
+        public void SetBodyRotation(float yawDegrees, bool instant)
         {
-            targetArmatureRotation = Quaternion.Euler(0, 270f, 180f - angle);
-            if (instant) view.SetUpperBodyRotation(targetArmatureRotation);
+            targetBodyRotation = Quaternion.Euler(0f, yawDegrees, 0f);
+
+            if (instant)
+                transform.rotation = targetBodyRotation;
         }
 
+        // Build / character modes (upper body)
+        public void SetUpperBodyRotation(float pitchDegrees, bool instant)
+        {
+            targetArmatureRotation = Quaternion.Euler(0f, 270f, 180f - pitchDegrees);
+
+            if (instant)
+                view.SetUpperBodyRotation(targetArmatureRotation);
+        }
+
+        // -----------------
+        // Update loop
+        // -----------------
         private void Update()
         {
             if (!active || view == null)
@@ -62,24 +123,20 @@ namespace Shpleeble
 
             view.FaceCamera();
 
-            // -----------------
-            // Movement
-            // -----------------
+            // -------- Movement --------
             if (targetPosition != transform.position)
             {
                 float distance = Vector3.Distance(transform.position, targetPosition);
-                float moveDuration = distance / maxMoveDuration;
+                float moveSpeed = distance / maxMoveDuration;
 
                 transform.position = Vector3.MoveTowards(
                     transform.position,
                     targetPosition,
-                    moveDuration * Time.deltaTime
+                    moveSpeed * Time.deltaTime
                 );
             }
 
-            // -----------------
-            // Rotation by mode
-            // -----------------
+            // -------- Rotation --------
             switch (Mode)
             {
                 case CharacterMode.Build:
@@ -98,20 +155,23 @@ namespace Shpleeble
             }
         }
 
+        // -----------------
+        // Rotation handlers
+        // -----------------
         private void HandleBuildModeRotation()
         {
-            // Upper body (armature)
-            if (view.TryGetUpperBodyRotation(out Quaternion currentArmature))
+            // Upper body
+            if (view.TryGetUpperBodyRotation(out Quaternion currentUpper))
             {
-                if (targetArmatureRotation != currentArmature)
+                if (currentUpper != targetArmatureRotation)
                 {
-                    float angle = Quaternion.Angle(currentArmature, targetArmatureRotation);
-                    float rotateDuration = angle / maxRotateDuration;
+                    float angle = Quaternion.Angle(currentUpper, targetArmatureRotation);
+                    float rotateSpeed = angle / maxRotateDuration;
 
                     Quaternion next = Quaternion.RotateTowards(
-                        currentArmature,
+                        currentUpper,
                         targetArmatureRotation,
-                        rotateDuration * Time.deltaTime
+                        rotateSpeed * Time.deltaTime
                     );
 
                     view.SetUpperBodyRotation(next);
@@ -119,34 +179,37 @@ namespace Shpleeble
             }
 
             // Full body
-            if (targetBodyRotation != transform.rotation)
+            if (transform.rotation != targetBodyRotation)
             {
                 float angle = Quaternion.Angle(transform.rotation, targetBodyRotation);
-                float rotateDuration = angle / maxRotateDuration;
+                float rotateSpeed = angle / maxRotateDuration;
 
                 transform.rotation = Quaternion.RotateTowards(
                     transform.rotation,
                     targetBodyRotation,
-                    rotateDuration * Time.deltaTime
+                    rotateSpeed * Time.deltaTime
                 );
             }
         }
 
         private void HandleRaceModeRotation()
         {
-            if (targetRotation != transform.rotation)
+            if (transform.rotation != targetRaceRotation)
             {
-                float angle = Quaternion.Angle(transform.rotation, targetRotation);
-                float rotateDuration = angle / maxRotateDuration;
+                float angle = Quaternion.Angle(transform.rotation, targetRaceRotation);
+                float rotateSpeed = angle / maxRotateDuration;
 
                 transform.rotation = Quaternion.RotateTowards(
                     transform.rotation,
-                    targetRotation,
-                    rotateDuration * Time.deltaTime
+                    targetRaceRotation,
+                    rotateSpeed * Time.deltaTime
                 );
             }
         }
 
+        // -----------------
+        // Lifecycle
+        // -----------------
         public void Activate()
         {
             active = true;

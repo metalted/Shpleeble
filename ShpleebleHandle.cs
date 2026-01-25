@@ -19,20 +19,65 @@ namespace Shpleeble
         public ShpleebleData Data => controller.Data;
         public CharacterMode Mode => controller.Mode;
 
+        // -----------------
+        // Data / state
+        // -----------------
         public void SetData(ShpleebleData data)
         {
             controller.SetShpleebleData(data);
         }
 
-        public void SetMode(CharacterMode mode) => controller.SetMode(mode);
+        public void SetMode(CharacterMode mode)
+        {
+            controller.SetMode(mode);
+        }
 
-        public void MoveTo(Vector3 position, bool instant = false) => controller.MoveTo(position, instant);
+        // -----------------
+        // Movement
+        // -----------------
+        public void MoveTo(Vector3 position, bool instant = false)
+        {
+            controller.MoveTo(position, instant);
+        }
 
-        public void LookAt(Vector3 euler, bool instant = false) => controller.LookAt(euler, instant);
+        // -----------------
+        // Rotation intents
+        // -----------------
 
-        public void LookUpperBody(float angle, bool instant = false) => controller.LookUpperBody(angle, instant);
+        // For race-like modes (single rigid body)
+        public void SetRaceRotation(Quaternion rotation, bool instant = false)
+        {
+            controller.SetRaceRotation(rotation, instant);
+        }
 
-        public void Activate() => controller.Activate();
-        public void Deactivate() => controller.Deactivate();
+        // For build / character modes (full body yaw)
+        public void SetBodyRotation(float yawDegrees, bool instant = false)
+        {
+            controller.SetBodyRotation(yawDegrees, instant);
+        }
+
+        // For build / character modes (upper body / "head")
+        public void SetUpperBodyRotation(float pitchDegrees, bool instant = false)
+        {
+            controller.SetUpperBodyRotation(pitchDegrees, instant);
+        }
+
+        // -----------------
+        // Misc
+        // -----------------
+        public void SetHorn(bool active)
+        {
+            controller.SetHorn(active);
+        }
+
+        public void Activate()
+        {
+            controller.Activate();
+        }
+
+        public void Deactivate()
+        {
+            controller.Deactivate();
+        }
     }
 }

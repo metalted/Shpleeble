@@ -18,7 +18,9 @@ namespace Shpleeble
         public ShpleebleHandle Create()
         {
             if (!_prefabCache.IsReady)
+            {
                 throw new InvalidOperationException("Shpleeble prefab not ready");
+            }
 
             ShpleebleController controller = GameObject.Instantiate(_prefabCache.GetPrefab().gameObject).GetComponent<ShpleebleController>();
 
