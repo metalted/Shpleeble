@@ -3,9 +3,13 @@ using HarmonyLib;
 
 namespace Shpleeble
 {
-    [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+    [BepInPlugin(pluginGUID, pluginName, pluginVersion)]
     public class ShpleeblePlugin : BaseUnityPlugin
     {
+        public const string pluginGUID = "com.metalted.zeepkist.shpleeble";
+        public const string pluginName = "Shpleeble";
+        public const string pluginVersion = "1.0.0";
+
         public static ShpleeblePlugin Instance;
 
         // =========================
