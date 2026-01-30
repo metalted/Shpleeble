@@ -8,7 +8,7 @@ namespace Shpleeble
     {
         public const string pluginGUID = "com.metalted.zeepkist.shpleeble";
         public const string pluginName = "Shpleeble";
-        public const string pluginVersion = "1.0.1";
+        public const string pluginVersion = "1.0.2";
 
         public static ShpleeblePlugin Instance;
 
