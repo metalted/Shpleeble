@@ -18,6 +18,7 @@ namespace Shpleeble
 
         public ShpleebleData Data => controller.Data;
         public CharacterMode Mode => controller.Mode;
+        public Vector3 Position => controller.gameObject.transform.position;
 
         // Data / state
         public void SetData(ShpleebleData data)

@@ -23,7 +23,8 @@ namespace Shpleeble
             }
 
             ShpleebleController controller = GameObject.Instantiate(_prefabCache.GetPrefab().gameObject).GetComponent<ShpleebleController>();
-
+            
+            GameObject.DontDestroyOnLoad(controller.gameObject);
             ShpleebleView view = ShpleebleView.FromRoot(controller.transform);
             controller.Initialize(view);
             controller.Activate();
