@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using UnityEngine;
 
 namespace Shpleeble
 {
@@ -8,7 +9,7 @@ namespace Shpleeble
     {
         public const string pluginGUID = "com.metalted.zeepkist.shpleeble";
         public const string pluginName = "Shpleeble";
-        public const string pluginVersion = "1.0.2";
+        public const string pluginVersion = "1.1";
 
         public static ShpleeblePlugin Instance;
 
@@ -25,6 +26,17 @@ namespace Shpleeble
             Instance != null &&
             Instance._prefabCache != null &&
             Instance._prefabCache.IsReady;
+
+        public static ShpleeblePhysicsModel CreatePhysicsModel(ShpleebleData data, Vector3 position, Quaternion rotation, Vector3 scale)
+        {
+            if (!IsReady)
+            {
+                return null;
+            }
+
+            return Instance._factory.CreatePhysicsModel(data, position, rotation, scale);
+        }
+
 
         /// <summary>
         /// Creates a new Shpleeble instance and returns its handle.
@@ -78,6 +90,16 @@ namespace Shpleeble
 
             _prefabCache.TryCaptureFromMainMenu();
         }
+
+        internal void SoapboxSetup(SoapboxShowoffSetup showoff)
+        {
+            if(_prefabCache.IsReady)
+            {
+                return;
+            }
+
+            _prefabCache.TryCapturePhysicsModel(showoff);
+        }
     }
 
     // =========================
@@ -89,6 +111,15 @@ namespace Shpleeble
         public static void Prefix()
         {
             ShpleeblePlugin.Instance?.EnteredMainMenu();
+        }
+    }
+
+    [HarmonyPatch(typeof(SoapboxShowoffSetup), "Start")]
+    internal class ShpleebleSoapboxShowoffSetupStartPatch
+    {
+        public static void Postfix(SoapboxShowoffSetup __instance)
+        {
+            ShpleeblePlugin.Instance?.SoapboxSetup( __instance);
         }
     }
 }

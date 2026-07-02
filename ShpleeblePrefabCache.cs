@@ -9,14 +9,17 @@ namespace Shpleeble
 {
     public class ShpleeblePrefabCache
     {
-        public bool IsReady => _prefabController != null;
+        public bool IsReady => _prefabController != null && _prefabPhysicsModel != null;
 
         private ShpleebleController _prefabController;
+        private ShpleeblePhysicsModel _prefabPhysicsModel;
 
         public void TryCaptureFromMainMenu()
         {
             if (_prefabController != null)
+            {
                 return;
+            }
 
             NetworkedGhostSpawner spawner = GameObject.FindObjectOfType<NetworkedGhostSpawner>(true);
 
@@ -32,9 +35,47 @@ namespace Shpleeble
             prefabRoot.SetActive(false);
         }
 
+        public void TryCapturePhysicsModel(SoapboxShowoffSetup showoff)
+        {
+            if(_prefabPhysicsModel != null)
+            {
+                return;
+            }            
+
+            _prefabPhysicsModel = BuildPhysicsPrefab(showoff);
+            GameObject prefabRoot = _prefabPhysicsModel.gameObject;
+            GameObject.DontDestroyOnLoad(prefabRoot);
+            prefabRoot.SetActive(false);
+        }
+
         public ShpleebleController GetPrefab()
         {
             return _prefabController;
+        }
+
+        public ShpleeblePhysicsModel GetPhysicsPrefab()
+        {
+            return _prefabPhysicsModel;
+        }
+
+        private ShpleeblePhysicsModel BuildPhysicsPrefab(SoapboxShowoffSetup showoff)
+        {
+            GameObject root = GameObject.Instantiate(showoff.gameObject);
+            root.transform.parent = null;
+
+            SoapboxShowoffSetup rootShowoff = root.GetComponent<SoapboxShowoffSetup>();
+            if(rootShowoff != null)
+            {
+                GameObject.DestroyImmediate(rootShowoff);
+            }
+
+            GameObject pModel = new GameObject("Physics Model");
+            root.transform.parent = pModel.transform;
+            root.transform.localPosition = Vector3.zero;
+            root.transform.localRotation = Quaternion.identity;
+
+            ShpleeblePhysicsModel physics = pModel.AddComponent<ShpleeblePhysicsModel>();
+            return physics;
         }
 
         private ShpleebleController BuildPrefab(NetworkedGhostSpawner spawner)

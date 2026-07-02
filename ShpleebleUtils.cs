@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Shpleeble
 {
@@ -62,6 +62,47 @@ namespace Shpleeble
             }          
         }
 
+        public static ShpleebleData RandomData()
+        {
+            int zeepkist = GetRandomIntFromList(new List<int>(PlayerManager.Instance.objectsList.wardrobe.everyZeepkist.Keys));
+            int hat = GetRandomIntFromList(new List<int>(PlayerManager.Instance.objectsList.wardrobe.everyHat.Keys));
+            int color = GetRandomIntFromList(new List<int>(PlayerManager.Instance.objectsList.wardrobe.everyColor.Keys));
+            int glasses = GetRandomIntFromList(new List<int>(PlayerManager.Instance.objectsList.wardrobe.everyGlasses.Keys));
+            int wheel = GetRandomIntFromList(new List<int>(PlayerManager.Instance.objectsList.wardrobe.everyWheel.Keys));
+            int paraglider = GetRandomIntFromList(new List<int>(PlayerManager.Instance.objectsList.wardrobe.everyParaglider.Keys));
+            int horn = GetRandomIntFromList(new List<int>(PlayerManager.Instance.objectsList.wardrobe.everyHorn.Keys));
+
+            ShpleebleData rng = new ShpleebleData()
+            {
+                chatColor = "#ffffff",
+                color = color,
+                color_body = color,
+                color_leftArm = color,
+                color_leftLeg = color,
+                color_rightArm = color,
+                color_rightLeg = color,
+                frontWheels = wheel,
+                glasses = glasses,
+                hat = hat,
+                horn = horn,
+                name = "RandomShpleeble",
+                paraglider = paraglider,
+                rearWheels = wheel,
+                state = 0,
+                steamID = 0,
+                zeepkist = zeepkist
+            };
+
+            return rng;
+        }
+
+        private static int GetRandomIntFromList(List<int> keys)
+        {
+            int randomIndex = Random.Range(0, keys.Count);
+            int randomKey = keys[randomIndex];
+            return randomKey;
+        }
+
         private static string GetOnlinePlayerHexColor()
         {
             float h = PlayerManager.Instance.instellingen.GlobalSettings.online_name_color_H;
@@ -75,9 +116,9 @@ namespace Shpleeble
         private static string HsvToHex(float h, float s, float v)
         {
             // Ensure HSV values are within expected ranges
-            h = Math.Clamp(h, 0f, 360f);
-            s = Math.Clamp(s, 0f, 1f);
-            v = Math.Clamp(v, 0f, 1f);
+            h = Mathf.Clamp(h, 0f, 360f);
+            s = Mathf.Clamp(s, 0f, 1f);
+            v = Mathf.Clamp(v, 0f, 1f);
 
             // Convert HSV to RGB
             int hi = (int)(h / 60) % 6;

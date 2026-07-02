@@ -31,5 +31,22 @@ namespace Shpleeble
 
             return new ShpleebleHandle(controller);
         }
+
+        public ShpleeblePhysicsModel CreatePhysicsModel(ShpleebleData data, Vector3 position, Quaternion rotation, Vector3 scale)
+        {
+            if(!_prefabCache.IsReady)
+            {
+                throw new InvalidOperationException("Shpleeble prefabs not ready");
+            }
+
+            GameObject obj = GameObject.Instantiate(_prefabCache.GetPhysicsPrefab().gameObject, position, rotation);
+            obj.transform.localScale = scale;
+            obj.gameObject.SetActive(true);
+            ShpleeblePhysicsModel pModel = obj.GetComponent<ShpleeblePhysicsModel>();
+            pModel.SetCosmetics(data);
+            pModel.SetInternalScale(scale);
+
+            return pModel;            
+        }
     }
 }
